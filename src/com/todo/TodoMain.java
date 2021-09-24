@@ -11,15 +11,16 @@ public class TodoMain {
 	public static void start() {
 	
 		TodoList l = new TodoList();
-		TodoUtil.loadList(l,  "D:/todolist.txt");
+		TodoUtil.loadList(l, "D:/todolist.txt");
 		boolean isList = false;
 		boolean quit = false;
 		
 		Menu.displaymenu();
 		do {
 			isList = false;
-			String choice = Menu.prompt();
-			switch (choice) {
+			String input = Menu.prompt();
+			String[] choice = input.split(" ");
+			switch (choice[0]) {
 			
 			case "help": 
 				Menu.displaymenu();
@@ -38,6 +39,10 @@ public class TodoMain {
 				
 			case "ls":
 				TodoUtil.listAll(l);
+				break;
+				
+			case "ls_cate":
+				TodoUtil.listCate(l);
 				break;
 
 			case "ls_name_asc":
@@ -58,6 +63,24 @@ public class TodoMain {
 				isList = true;
 				System.out.println("The list has been sorted by the dates.");
 				break;
+			
+			case "ls_date_desc":
+				l.sortByDate();
+				l.reverseList();
+				isList = true;
+				System.out.println("The list has been sorted by the dates in descending order.");
+				break;
+				
+			case "find":
+				if(choice.length > 1) TodoUtil.find(l,  choice[1]);
+				else System.out.println("Please enter a keyword to find");
+				break;
+			
+			case "find_cate":
+				if(choice.length > 1) TodoUtil.findCate(l,  choice[1]);
+				else System.out.println("Please enter a keyword to find");
+				break;
+				
 
 			case "exit":
 				quit = true;

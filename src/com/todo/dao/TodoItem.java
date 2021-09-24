@@ -9,11 +9,16 @@ public class TodoItem {
     private String title;
     private String desc;
     private String current_date;
+    private String category;
+    private String due_date;
+    private int num;
 
 
-    public TodoItem(String title, String desc){
+    public TodoItem(String title, String desc, String category, String due_date){
         this.title=title;
         this.desc=desc;
+        this.category = category;
+        this.due_date = due_date;
         this.current_date= new String();
     }
     
@@ -47,7 +52,37 @@ public class TodoItem {
     	this.current_date = current_date;
     }
     
+    public void setCategory(String category) {
+    	this.category = category;
+    }
+    
+    public String getCategory() {
+    	return category;
+    }
+    
+    public void setDueDate(String due_date) {
+    	this.due_date = due_date;
+    }
+    
+    public String getDueDate() {
+    	return due_date;
+    }
+    
+    public void setNum(int num) {
+    	this.num = num;
+    }
+    
+    public int getNum() {
+    	return num;
+    }
+    
+    public String print() {
+    	return num + ". " + "[" + category + "] " + title + " - " + desc 
+			+ " - " + due_date + " - " + current_date;
+    }
+    
     public String toSaveString() {
-    	return title + "##" + desc + "##" + current_date + "\n";
+    	return category + "##" + title + "##" + 
+    			desc + "##" + due_date + "##" + current_date + "\n";
     }
 }

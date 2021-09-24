@@ -11,6 +11,11 @@ public class TodoList {
 	public TodoList() {
 		this.list = new ArrayList<TodoItem>();
 	}
+	
+	
+	public int getLength() {
+		return list.size();
+	}
 
 	public void addItem(TodoItem t) {
 		list.add(t);
@@ -36,9 +41,12 @@ public class TodoList {
 	}
 
 	public void listAll() {
-		System.out.println("[List of Items]");
-		for (TodoItem item : this.getList()) {
-			System.out.println("[" + item.getTitle() + "] " + item.getDesc() + " - " + item.getCurrent_date());
+		System.out.printf("[List of Items, %d items in total]\n", list.size());
+		int count = 0;
+		for (TodoItem item : list) {
+			item.setNum(++count);
+			System.out.println(item.getNum() + ". " + "[" + item.getCategory() + "] " + item.getTitle() + " - " + item.getDesc() 
+			  					+ " - " + item.getDueDate() + " - " + item.getCurrent_date());
 		}
 	}
 	
