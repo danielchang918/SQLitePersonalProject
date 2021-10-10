@@ -11,15 +11,17 @@ public class TodoItem {
     private String current_date;
     private String category;
     private String due_date;
-    private int num;
+    private int id;
+    private int is_completed;
 
 
-    public TodoItem(String title, String desc, String category, String due_date){
+    public TodoItem(String title, String desc, String category, String due_date, int is_completed){
         this.title=title;
         this.desc=desc;
         this.category = category;
         this.due_date = due_date;
         this.current_date= new String();
+        this.is_completed = 0;
     }
     
     public String getTitle() {
@@ -68,21 +70,36 @@ public class TodoItem {
     	return due_date;
     }
     
-    public void setNum(int num) {
-    	this.num = num;
+    public void setId(int id) {
+    	this.id = id;
     }
     
-    public int getNum() {
-    	return num;
+    public int getId() {
+    	return id;
+    }
+    
+    public void setComp(int is_completed) {
+    	this.is_completed = is_completed;
+    }
+    
+    public int getComp() {
+    	return is_completed;
     }
     
     public String print() {
-    	return num + ". " + "[" + category + "] " + title + " - " + desc 
-			+ " - " + due_date + " - " + current_date;
+    	if(this.is_completed == 0) {
+    		return id + ". " + "[" + category + "] " + title + " - " + desc 
+    				+ " - " + due_date + " - " + current_date;
+    	}
+    	else {
+    		return id + ". " + "[" + category + "] " + title + "[V]" + " - " + desc 
+    				+ " - " + due_date + " - " + current_date;
+    	}
+    	
     }
     
     public String toSaveString() {
     	return category + "##" + title + "##" + 
-    			desc + "##" + due_date + "##" + current_date + "\n";
+    			desc + "##" + due_date + "##" + current_date + "##" + is_completed + "\n";
     }
 }

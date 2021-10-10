@@ -11,7 +11,7 @@ public class TodoMain {
 	public static void start() {
 	
 		TodoList l = new TodoList();
-		TodoUtil.loadList(l, "D:/todolist.txt");
+		l.importData("D:/todolist.txt");
 		boolean isList = false;
 		boolean quit = false;
 		
@@ -36,6 +36,10 @@ public class TodoMain {
 			case "edit":
 				TodoUtil.updateItem(l);
 				break;
+			
+			case "comp":
+				TodoUtil.completeItem(l, choice[1]);
+				break;
 				
 			case "ls":
 				TodoUtil.listAll(l);
@@ -44,31 +48,29 @@ public class TodoMain {
 			case "ls_cate":
 				TodoUtil.listCate(l);
 				break;
+			
+			case "ls_comp":
+				TodoUtil.listAll(l, 1);
+				break;
 
 			case "ls_name_asc":
-				l.sortByName();
-				isList = true;
 				System.out.println("The list has been sorted by the titles.");
+				TodoUtil.listAll(l, "title", 1);
 				break;
 
 			case "ls_name_desc":
-				l.sortByName();
-				l.reverseList();
-				isList = true;
 				System.out.println("The list has been sorted by the titles in descending order.");
+				TodoUtil.listAll(l, "title", 0);
 				break;
 				
 			case "ls_date":
-				l.sortByDate();
-				isList = true;
 				System.out.println("The list has been sorted by the dates.");
+				TodoUtil.listAll(l, "due_date", 1);
 				break;
 			
 			case "ls_date_desc":
-				l.sortByDate();
-				l.reverseList();
-				isList = true;
 				System.out.println("The list has been sorted by the dates in descending order.");
+				TodoUtil.listAll(l, "due_date", 0);
 				break;
 				
 			case "find":

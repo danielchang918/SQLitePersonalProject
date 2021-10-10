@@ -31,35 +31,19 @@ public class TodoUtil {
 		System.out.print("due_date > ");
 		due_date = sc.nextLine();
 		
-		TodoItem t = new TodoItem(title, desc, category, due_date);
+		TodoItem t = new TodoItem(title, desc, category, due_date, 0);
 		Date curr_date = new Date(System.currentTimeMillis());
 		t.setCurrent_date(curr_date);
-		list.addItem(t);
+		if(list.addItem(t)>0) System.out.println("Addition complete.");
 	}
 
 	public static void deleteItem(TodoList l) {
-		
-		Boolean check = false;
 		Scanner sc = new Scanner(System.in);
 		System.out.print("[Delete Item Section]\n"
 				+ "Enter the number of item you wish to delete > ");
 		int num = sc.nextInt();
-		sc.nextLine();
-		
-		for (TodoItem item : l.getList()) {
-			if (item.getNum() == num) {
-				System.out.println(item.print());
-				check = true;
-				System.out.print("Delete the item above? (y/n) > ");
-				if(sc.nextLine().equals("y")) {
-				l.deleteItem(item);
-				System.out.println("The item has been deleted.");
-				break;
-				}
-			}
-		}
-		
-		if(check == false) System.out.println("The item doesn't exist!");
+
+		if(l.deleteItem(num)>0) System.out.println("Deletion complete.");
 	}
 
 
@@ -70,65 +54,65 @@ public class TodoUtil {
 		System.out.print("[Edit Item Section]\n"
 				+ "Enter the number of item you wish to edit > ");
 		int number = sc.nextInt();
-		if (number > l.getLength()) {
-			System.out.print("The item does not exist!");
-		}
-		for(TodoItem item : l.getList()) {
-			if(item.getNum() == number) {
-				System.out.println(item.print());
-				l.deleteItem(item);
-			}
-		}
 		
 		sc.nextLine();
 		
 		System.out.print("New Title > ");
 		String new_title = sc.nextLine().trim();
-		if (l.isDuplicate(new_title)) {
-			System.out.println("Title can't be duplicate!");
-			return;
-		}
-		
-		System.out.print("New Description > ");
-		String new_description = sc.nextLine().trim();
 		
 		System.out.print("New Category > ");
 		String new_category = sc.nextLine().trim();
 		
-		System.out.print("New Due Date > ");;
+		System.out.print("New Description > ");
+		String new_description = sc.nextLine().trim();
+
+		
+		System.out.print("New Due Date > ");
 		String new_due_date = sc.nextLine().trim();
 		
-		TodoItem t = new TodoItem(new_title, new_description, new_category, new_due_date);
+		TodoItem t = new TodoItem(new_title, new_description, new_category, new_due_date, 0);
 		Date curr_date = new Date(System.currentTimeMillis());
 		t.setCurrent_date(curr_date);
-		l.addItem(t);
-		System.out.println("The item has been updated");
+		t.setId(number);
 		
-
+		if(l.editItem(t)>0) System.out.println("Edition complete.");
 	}
 
+	public static void completeItem(TodoList l, String choice) {
+		if(l.completeItem(choice)>0) System.out.println("The item has been completed.");
+	}
+	
+	
 	public static void listAll(TodoList l) {
-		System.out.printf("[List of Items, %d items in total]\n", l.getLength());
-		int count = 0;
+		System.out.printf("[List of Items, %d items in total]\n", l.getCount());
 		for (TodoItem item : l.getList()) {
-			item.setNum(++count);
 			System.out.println(item.print());
 		}
 	}
 	
-	public static void listCate(TodoList l) {
-		String categories = new String();
-		int count = 0;
-		for (TodoItem item : l.getList()) {
-			if(!categories.contains(item.getCategory())){
-				count++;
-				categories = categories + item.getCategory() + " / ";
-			}
+	public static void listAll(TodoList l, String orderby, int ordering) {
+		System.out.printf("[List of Items, %d items in total]\n", l.getCount());
+		for (TodoItem item : l.getOrderedList(orderby, ordering)){
+			System.out.println(item.print());
 		}
+	}
+	
+	public static void listAll(TodoList l, int comp) {
+		ArrayList<TodoItem> comp_list = l.getList(1);
 		
-		categories = categories.substring(0,categories.length()-2);
-		System.out.println(categories);
-		System.out.println("Total of " + count + " categories");
+		for (TodoItem item : comp_list){
+			System.out.println(item.print());
+		}
+		System.out.printf("Total of %d items have been completed.\n", comp_list.size());
+	}
+	
+	public static void listCate(TodoList l) {
+		int count = 0;
+		for (String item : l.getCategories()) {
+				System.out.print(item + " ");
+				count++;
+			}
+		System.out.printf("\nTotal of %d Categories.\n", count);
 	}
 	
 	public static void saveList(TodoList l, String filename) throws IOException {
@@ -146,7 +130,7 @@ public class TodoUtil {
 			FileReader fr = new FileReader(filename);
 			BufferedReader br = new BufferedReader(fr);
 			String str = new String("");
-			String category, title, description, due_date, current_date;
+			String category, title, description, due_date, current_date, is_completed;
 			
 			for(int i = 0; (str = br.readLine()) != null;i++){
 				StringTokenizer st = new StringTokenizer(str, "##");
@@ -155,8 +139,10 @@ public class TodoUtil {
 				description = st.nextToken();
 				due_date = st.nextToken();
 				current_date = st.nextToken();
+				is_completed = st.nextToken();
 				
-				TodoItem item = new TodoItem(title, description, category, due_date);
+				int num = Integer.parseInt(is_completed);
+				TodoItem item = new TodoItem(title, description, category, due_date, num);
 				item.setCurrent_date(current_date);
 				l.addItem(item);
 			}
@@ -172,16 +158,9 @@ public class TodoUtil {
 	
 	public static void find(TodoList l, String keyword) {
 		int count = 0;
-		for(TodoItem item : l.getList()) {
-			if(item.getTitle().contains(keyword)) {
-				count++;
-				System.out.println(item.print());
-				continue;
-			}
-			if(item.getDesc().contains(keyword)) {
-				count++;
-				System.out.println(item.print());
-			}
+		for(TodoItem item : l.getList(keyword)) {
+			System.out.println(item.print());
+			count++;
 		}
 		
 		if(count != 0) System.out.println("Total of " + count + " items were found.");
@@ -190,14 +169,12 @@ public class TodoUtil {
 	
 	public static void findCate(TodoList l, String keyword) {
 		int count = 0;
-		for(TodoItem item : l.getList()) {
-			if(item.getCategory().contains(keyword)) {
-				count++;
-				System.out.println(item.print());
-			}
+		for(TodoItem item : l.getListCategory(keyword)) {
+			System.out.println(item.print());
+			count++;
 		}
 		
-		if(count != 0) System.out.println("Total of " + count + " items were found.");
+		if(count != 0) System.out.println("\nTotal of " + count + " items were found.\n");
 		else System.out.println("Could not find any item.");
 	}
 }
