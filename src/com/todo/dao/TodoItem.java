@@ -21,7 +21,7 @@ public class TodoItem {
         this.category = category;
         this.due_date = due_date;
         this.current_date= new String();
-        this.is_completed = 0;
+        this.is_completed = is_completed;
     }
     
     public String getTitle() {
@@ -87,15 +87,17 @@ public class TodoItem {
     }
     
     public String print() {
+    	String str = new String();
     	if(this.is_completed == 0) {
-    		return id + ". " + "[" + category + "] " + title + " - " + desc 
+    		str =  id + ". " + "[" + category + "] " + title + " - " + desc 
     				+ " - " + due_date + " - " + current_date;
     	}
-    	else {
-    		return id + ". " + "[" + category + "] " + title + "[V]" + " - " + desc 
+    	else if(this.is_completed == 1){
+    		str = id + ". " + "[" + category + "] " + title + "[V]" + " - " + desc 
     				+ " - " + due_date + " - " + current_date;
     	}
     	
+    	return str;
     }
     
     public String toSaveString() {
